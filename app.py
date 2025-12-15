@@ -12,6 +12,8 @@ import os
 from pathlib import Path
 import sys
 from werkzeug.utils import secure_filename
+import csv
+from datetime import datetime
 
 # Add the src directory to the path to import fairorfoul modules
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
@@ -25,12 +27,14 @@ app.secret_key = "fair-or-foul-secret-key-2024"
 
 # Configuration
 UPLOAD_FOLDER = "uploads"
+DATA_FOLDER = "data"
 ALLOWED_EXTENSIONS = {"csv", "mp4", "avi", "mov", "mkv"}
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 500 * 1024 * 1024  # 500MB max file size
 
-# Ensure upload directory exists
+# Ensure directories exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(DATA_FOLDER, exist_ok=True)
 os.makedirs("data/processed", exist_ok=True)
 
 
@@ -131,6 +135,87 @@ def download_file(filename):
 @app.route("/get_sport_call_types/<sport>")
 def get_sport_call_types(sport):
     if sport.lower() in CALL_TYPES:
+        return jsonify(CALL_TYPES[sport.lower()])
+    return jsonify([])
+
+
+@app.route("/save_pose_session", methods=["POST"])
+def save_pose_session():
+    """Save pose detection session data to CSV"""
+    try:
+        data = request.get_json()
+        session_data = data.get("session_data", [])
+        
+        if not session_data:
+            return jsonify({"error": "No session data provided"}), 400
+        
+        # Create filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"pose_session_{timestamp}.csv"
+        filepath = os.path.join(DATA_FOLDER, filename)
+        
+        # Write CSV file
+        if session_data:
+            keys = session_data[0].keys()
+            with open(filepath, 'w', newline='') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=keys)
+                writer.writeheader()
+                writer.writerows(session_data)
+        
+        return jsonify({
+            "success": True,
+            "filename": filename,
+            "filepath": filepath,
+            "message": f"Session saved to {filename}"
+        })
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/get_saved_sessions")
+def get_saved_sessions():
+    """Get list of saved pose detection sessions"""
+    try:
+        sessions = []
+        if os.path.exists(DATA_FOLDER):
+            for filename in os.listdir(DATA_FOLDER):
+                if filename.startswith("pose_session_") and filename.endswith(".csv"):
+                    filepath = os.path.join(DATA_FOLDER, filename)
+                    file_size = os.path.getsize(filepath)
+                    file_time = os.path.getmtime(filepath)
+                    
+                    sessions.append({
+                        "filename": filename,
+                        "filepath": filepath,
+                        "size": file_size,
+                        "created": datetime.fromtimestamp(file_time).isoformat()
+                    })
+        
+        # Sort by creation time (newest first)
+        sessions.sort(key=lambda x: x["created"], reverse=True)
+        return jsonify(sessions)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/download_session/<filename>")
+def download_session(filename):
+    """Download a saved pose detection session"""
+    try:
+        filepath = os.path.join(DATA_FOLDER, filename)
+        
+        # Security check
+        if not filename.startswith("pose_session_") or not os.path.exists(filepath):
+            return "File not found", 404
+        
+        return send_file(filepath, as_attachment=True, download_name=filename)
+    
+    except Exception as e:
+        return str(e), 500
+
+
         return jsonify(CALL_TYPES[sport.lower()])
     return jsonify([])
 

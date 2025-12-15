@@ -472,3 +472,147 @@ footer {
     border-color: var(--primary-color);
     color: var(--primary-color);
 }
+/* Pose Detection Styles */
+#poseCanvas {
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    background: #000000;
+    display: block;
+    margin: 0 auto;
+}
+
+#counterDisplay {
+    z-index: 10;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+}
+
+#counterDisplay .bg-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
+}
+
+.stat-box {
+    padding: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: rgba(0, 212, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-box:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.stat-box h3 {
+    margin: 10px 0 0 0;
+    font-weight: bold;
+}
+
+/* Video and Canvas Container */
+.video-container {
+    position: relative;
+    width: 100%;
+    background: #000000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+video {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Button Styling for Pose Detection */
+#startBtn, #stopBtn, #resetBtn {
+    font-weight: 600;
+    border: 2px solid;
+    transition: all 0.3s ease;
+}
+
+#startBtn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-color: #28a745;
+}
+
+#startBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
+}
+
+#stopBtn {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border-color: #dc3545;
+}
+
+#stopBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(220, 53, 69, 0.4);
+}
+
+#resetBtn {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    border-color: #ffc107;
+    color: #000000;
+}
+
+#resetBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+}
+
+/* Status Message */
+#statusMessage {
+    margin-bottom: 0;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Session Cards */
+.card {
+    border: 1px solid var(--border-color);
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(40, 40, 40, 0.8) 100%);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+/* Saved Sessions */
+#savedSessions .card {
+    border: 2px solid var(--border-color);
+}
+
+#savedSessions .card:hover {
+    transform: translateY(-5px);
+}
+
+#savedSessions .btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #000000;
+    font-weight: 600;
+}
+
+#savedSessions .btn-primary:hover {
+    background: var(--hover-color);
+    border-color: var(--hover-color);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+}

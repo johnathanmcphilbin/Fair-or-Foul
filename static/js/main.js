@@ -353,6 +353,52 @@ function setupEventListeners() {
             }
         });
     }
+
+    // Safe binding for pose detection controls (avoid relying on inline onclick)
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const calibrateBtn = document.getElementById('calibrateBtn');
+    const resetCalBtn = document.getElementById('resetCalBtn');
+    const overlaySelect = document.getElementById('overlayModeSelect');
+
+    if (startBtn) startBtn.addEventListener('click', () => {
+        if (window.startPoseDetection) return startPoseDetection();
+        if (window.poseDetector && typeof window.poseDetector.start === 'function') return window.poseDetector.start();
+        console.error('Pose detector not ready');
+    });
+
+    if (stopBtn) stopBtn.addEventListener('click', () => {
+        if (window.stopPoseDetection) return stopPoseDetection();
+        if (window.poseDetector && typeof window.poseDetector.stop === 'function') return window.poseDetector.stop();
+        console.error('Pose detector not ready');
+    });
+
+    if (resetBtn) resetBtn.addEventListener('click', () => {
+        if (window.resetDetection) return resetDetection();
+        if (window.poseDetector && typeof window.poseDetector.reset === 'function') return window.poseDetector.reset();
+        console.error('Pose detector not ready');
+    });
+
+    if (calibrateBtn) calibrateBtn.addEventListener('click', () => {
+        if (window.poseDetector && typeof window.poseDetector.startCalibration === 'function') {
+            return window.poseDetector.startCalibration();
+        }
+        console.error('Pose detector not ready for calibration');
+    });
+
+    if (resetCalBtn) resetCalBtn.addEventListener('click', () => {
+        if (window.poseDetector && typeof window.poseDetector.resetCalibration === 'function') {
+            return window.poseDetector.resetCalibration();
+        }
+        console.error('Pose detector not ready for calibration reset');
+    });
+
+    if (overlaySelect) overlaySelect.addEventListener('change', (e) => {
+        const v = e.target.value;
+        if (window.setOverlayMode) return setOverlayMode(v);
+        if (window.poseDetector && typeof window.poseDetector.setOverlayMode === 'function') return window.poseDetector.setOverlayMode(v);
+    });
 }
 
 // Smooth Scrolling
